@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insta Reel Saver</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5ff;
+  text-align: center;
+  color: #222;
+}
+header {
+  background: linear-gradient(120deg, #833ab4, #fd1d1d, #fcb045);
+  color: white;
+  padding: 25px 10px;
+}
+main {
+  background: white;
+  max-width: 450px;
+  margin: 35px auto;
+  padding: 25px 18px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px #ddd;
+}
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+button {
+  background: #e1306c;
+  color: white;
+  padding: 13px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
+.note {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+footer {
+  padding: 20px;
+  color: #666;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>📥 Insta Reel Saver</h1>
+  <p>Simple and free Reel-saving helper</p>
+</header>
+<main>
+  <h2>Save Your Instagram Reel</h2>
+  <p>Paste your Reel link below</p>
+  <form id="reelForm">
+    <input type="url" id="reelLink"
+      placeholder="Paste Instagram Reel URL"
+      required>
+    <button type="submit">Continue</button>
+  </form>
+  <p id="message"></p>
+  <p class="note">
+    Use only content you own or have permission to download.
+    This website is an independent project and is not affiliated
+    with Instagram.
+  </p>
+</main>
+<footer>© 2026 Insta Reel Saver</footer>
+<script>
+document.getElementById("reelForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const link = document.getElementById("reelLink").value.trim();
+  try {
+    const url = new URL(link);
+    if (url.hostname === "instagram.com" ||
+        url.hostname.endsWith(".instagram.com")) {
+      document.getElementById("message").textContent =
+        "Link entered successfully. Actual video downloading is not connected yet.";
+    } else {
+      document.getElementById("message").textContent =
+        "Please enter a valid Instagram link.";
+    }
+  } catch {
+    document.getElementById("message").textContent =
+      "Please enter a valid URL.";
+  }
+});
+</script>
+</body>
+</html>
