@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Insta Reel Saver</title>
-
-<meta name="description" content="Check your public Instagram Reel link with Insta Reel Saver.">
-
-<style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Insta Reel Saver</title>
+<meta name="description" content="Check Instagram Reel links and try downloading videos you own or have permission to save."><style>
 * {
   box-sizing: border-box;
 }
@@ -62,6 +56,7 @@ input {
 button {
   width: 100%;
   padding: 14px;
+  margin-top: 8px;
   border: none;
   border-radius: 9px;
   background: #833ab4;
@@ -69,6 +64,10 @@ button {
   font-size: 17px;
   font-weight: bold;
   cursor: pointer;
+}
+
+#downloadButton {
+  background: #16803c;
 }
 
 button:disabled {
@@ -102,127 +101,156 @@ footer a {
   text-decoration: none;
   margin: 0 4px;
 }
-</style>
-</head>
-
-<body>
-
-<header>
+</style></head><body><header>
   <h1>📥 Insta Reel Saver</h1>
-  <p>Instagram Reel Link Checker</p>
-</header>
-
-<main class="container">
-
+  <p>Instagram Reel Link Checker & Downloader</p>
+</header><main class="container">
   <section class="card">
     <h2>Instagram Reels Saver</h2>
+    <p>Paste the link to a Reel you own or have permission to download.</p><form id="reelForm">
+  <input
+    type="url"
+    id="reelUrl"
+    placeholder="https://www.instagram.com/reel/..."
+    aria-label="Instagram Reel URL"
+    required
+  >
 
-    <p>Paste your public Instagram Reel link below.</p>
+  <button type="submit" id="checkButton">
+    Check Reel Link
+  </button>
+</form>
 
-    <form id="reelForm">
-      <input
-        type="url"
-        id="reelUrl"
-        placeholder="https://www.instagram.com/reel/..."
-        aria-label="Instagram Reel URL"
-        required
-      >
+<button type="button" id="downloadButton">
+  Download Reel
+</button>
 
-      <button type="submit" id="checkButton">
-        Check Reel Link
-      </button>
-    </form>
+<p id="message" role="status" aria-live="polite"></p>
 
-    <p id="message" role="status" aria-live="polite"></p>
+<p><small>
+  Downloads may fail if the video is unavailable through supported public access.
+</small></p>
 
-    <p>
-      <small>
-        Note: Video downloading is not available yet.
-      </small>
-    </p>
-  </section>
-
-  <section class="info">
+  </section>  <section class="info">
     <h3>How to use</h3>
-    <p>1. Open Instagram and copy a public Reel link.</p>
+    <p>1. Copy a public Instagram Reel link.</p>
     <p>2. Paste the link into the box above.</p>
-    <p>3. Tap Check Reel Link.</p>
-    <p>Only save content you own or have permission to use.</p>
+    <p>3. Check the link, then select Download Reel.</p>
+    <p>Only download content you own or have permission to save. This site does not bypass private-account restrictions.</p>
   </section>
-
-</main>
-
-<footer>
+</main><footer>
   <a href="about.html">About Us</a> |
   <a href="privacy.html">Privacy Policy</a> |
   <a href="contact.html">Contact Us</a>
-
   <p>© 2026 Insta Reel Saver</p>
-</footer>
-
-<script>
+</footer><script>
 const form = document.getElementById("reelForm");
 const input = document.getElementById("reelUrl");
 const message = document.getElementById("message");
-const button = document.getElementById("checkButton");
+const checkButton = document.getElementById("checkButton");
+const downloadButton = document.getElementById("downloadButton");
+
+const API_BASE = "https://insta-reel-saver.onrender.com";
+
+function getValidReelUrl() {
+  const link = input.value.trim();
+
+  try {
+    const url = new URL(link);
+
+    if (
+      url.protocol !== "https:" ||
+      !/^www\.instagram\.com$/i.test(url.hostname) ||
+      !/^\/reel\/[A-Za-z0-9_-]+\/?$/i.test(url.pathname)
+    ) {
+      return null;
+    }
+
+    return link;
+  } catch (error) {
+    return null;
+  }
+}
 
 form.addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  const link = input.value.trim();
+  const link = getValidReelUrl();
 
-  let url;
-
-  try {
-    url = new URL(link);
-  } catch (error) {
-    message.textContent = "Please enter a valid Instagram Reel link.";
+  if (!link) {
+    message.textContent = "Please enter a valid Instagram Reel URL.";
     return;
   }
 
-  if (
-    url.protocol !== "https:" ||
-    !/^www\.instagram\.com$/i.test(url.hostname) ||
-    !/^\/reel\/[A-Za-z0-9_-]+\/?$/i.test(url.pathname)
-  ) {
-    message.textContent =
-      "Please enter a valid public Instagram Reel URL.";
-    return;
-  }
-
-  button.disabled = true;
+  checkButton.disabled = true;
   message.textContent = "Checking your link. Please wait...";
 
   try {
-    const response = await fetch(
-      "https://insta-reel-saver.onrender.com/api/check",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ url: link })
-      }
-    );
+    const response = await fetch(`${API_BASE}/api/check`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: link })
+    });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      message.textContent =
-        data.message || "Unable to check this link.";
-    } else {
-      message.textContent =
-        data.message || "Link checked successfully.";
-    }
-
+    message.textContent = data.message ||
+      (response.ok ? "Link checked successfully." : "Unable to check this link.");
   } catch (error) {
-    message.textContent =
-      "Could not connect to the server. Please try again in a moment.";
+    message.textContent = "Could not connect to the server. Please try again.";
   } finally {
-    button.disabled = false;
+    checkButton.disabled = false;
   }
 });
-</script>
 
-</body>
+downloadButton.addEventListener("click", async function() {
+  const link = getValidReelUrl();
+
+  if (!link) {
+    message.textContent = "Please enter a valid Instagram Reel URL first.";
+    input.focus();
+    return;
+  }
+
+  downloadButton.disabled = true;
+  message.textContent = "Requesting download. Please wait...";
+
+  try {
+    const response = await fetch(`${API_BASE}/api/download`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: link })
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+
+    if (!response.ok || contentType.includes("application/json")) {
+      let errorMessage = "Download failed. This Reel may not be available.";
+      try {
+        const data = await response.json();
+        errorMessage = data.message || errorMessage;
+      } catch (error) {}
+      message.textContent = errorMessage;
+      return;
+    }
+
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+
+    anchor.href = objectUrl;
+    anchor.download = "instagram-reel.mp4";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+
+    URL.revokeObjectURL(objectUrl);
+    message.textContent = "Download started. Check your Downloads folder.";
+  } catch (error) {
+    message.textContent = "Could not download. Check the server status and try again.";
+  } finally {
+    downloadButton.disabled = false;
+  }
+});
+</script></body>
 </html>
