@@ -153,23 +153,49 @@ function checkLink(){
   }
 }
 </script>
-  
+  <section style="max-width:600px;margin:25px auto;padding:25px;text-align:center;background:#f5f3ff;border-radius:15px;font-family:Arial,sans-serif;">
+
+  <h2>Instagram Reels Saver</h2>
+
+  <p>Paste Your Instagram Reel Link Below</p>
+
+  <input
+    type="url"
+    id="reelLink"
+    placeholder="Paste Instagram Reel URL Here"
+    style="width:90%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:10px 0;"
+  >
+
+  <button
+    onclick="checkReel()"
+    style="padding:12px 25px;background:#833ab4;color:white;border:none;border-radius:8px;font-size:16px;">
+    Download Reel
+  </button>
+
+  <p id="result" style="margin-top:15px;"></p>
+
+</section>
+
+<script>
+function checkReel() {
+  const link = document.getElementById("reelLink").value.trim();
+  const result = document.getElementById("result");
+
+  if (!/^https?:\/\/(www\.)?instagram\.com\/reel\/[A-Za-z0-9_-]+\/?(\?.*)?$/.test(link)) {
+    result.textContent = "Please enter a valid Instagram Reel link.";
+    return;
+  }
+
+  result.textContent =
+    "Reel link accepted. Actual video downloading is not set up yet.";
+}
+</script>
 <footer style="text-align:center;padding:20px;background:#f5f3ff;margin-top:20px;">
   <a href="about.html">About Us</a> |
   <a href="privacy.html">Privacy Policy</a> |
   <a href="contact.html">Contact Us</a>
   <p>© 2026 Insta Reel Saver</p>
 </footer>
-  <section style="max-width:600px;margin:20px auto;padding:20px;text-align:center;background:#f5f3ff;border-radius:12px;">
-  <h2>Instagram Reels Saver</h2>
-  <p>Paste your Instagram Reel link to get started.</p>
-  <p>Please download only videos you own or have permission to save.</p>
-  <a href="https://www.instagram.com/"
-     target="_blank"
-     rel="noopener noreferrer"
-     style="display:inline-block;padding:12px 24px;background:#833ab4;color:white;text-decoration:none;border-radius:8px;">
-     Open Instagram
-  </a>
-</section>
+  
 </body> 
 </html>
