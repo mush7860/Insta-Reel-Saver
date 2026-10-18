@@ -1,98 +1,158 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insta Reel Saver</title>
+<meta name="description" content="Insta Reel Saver - A simple and mobile-friendly Instagram Reel link tool.">
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f5ff;
-  text-align: center;
-  color: #222;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f3ff;
+  color:#222;
 }
-header {
-  background: linear-gradient(120deg, #833ab4, #fd1d1d, #fcb045);
-  color: white;
-  padding: 25px 10px;
+header{
+  background:linear-gradient(120deg,#833ab4,#fd1d1d,#fcb045);
+  color:white;
+  text-align:center;
+  padding:28px 15px;
 }
-main {
-  background: white;
-  max-width: 450px;
-  margin: 35px auto;
-  padding: 25px 18px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px #ddd;
+header h1{margin:0;font-size:30px}
+header p{margin:10px 0 0;font-size:15px}
+.container{
+  max-width:520px;
+  margin:28px auto;
+  padding:20px;
 }
-input {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin: 15px 0;
+.card{
+  background:white;
+  padding:24px 18px;
+  border-radius:18px;
+  box-shadow:0 5px 20px #00000012;
+  text-align:center;
 }
-button {
-  background: #e1306c;
-  color: white;
-  padding: 13px 25px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+h2{font-size:23px;margin-top:0}
+input{
+  width:100%;
+  padding:15px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  font-size:15px;
+  margin:12px 0;
 }
-.note {
-  font-size: 13px;
-  color: #666;
-  line-height: 1.6;
+button{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:10px;
+  background:#833ab4;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
 }
-footer {
-  padding: 20px;
-  color: #666;
-  font-size: 13px;
+button:hover{background:#692b91}
+#message{
+  margin-top:15px;
+  font-size:14px;
+  overflow-wrap:anywhere;
+}
+.ad{
+  margin-top:22px;
+  min-height:90px;
+  background:#fff;
+  border:1px dashed #bbb;
+  border-radius:12px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#888;
+  font-size:14px;
+}
+.info{
+  background:white;
+  margin-top:20px;
+  padding:20px;
+  border-radius:15px;
+  line-height:1.7;
+}
+footer{
+  text-align:center;
+  padding:22px 12px;
+  color:#666;
+  font-size:13px;
 }
 </style>
 </head>
 <body>
+
 <header>
   <h1>📥 Insta Reel Saver</h1>
-  <p>Simple and free Reel-saving helper</p>
+  <p>A simple tool for Instagram Reel links</p>
 </header>
-<main>
-  <h2>Save Your Instagram Reel</h2>
-  <p>Paste your Reel link below</p>
-  <form id="reelForm">
-    <input type="url" id="reelLink"
-      placeholder="Paste Instagram Reel URL"
-      required>
-    <button type="submit">Continue</button>
-  </form>
-  <p id="message"></p>
-  <p class="note">
-    Use only content you own or have permission to download.
-    This website is an independent project and is not affiliated
-    with Instagram.
-  </p>
-</main>
-<footer>© 2026 Insta Reel Saver</footer>
+
+<div class="container">
+  <div class="card">
+    <h2>Get Your Reel Link Ready</h2>
+    <p>Paste a public Instagram Reel URL below.</p>
+
+    <input
+      type="url"
+      id="reelUrl"
+      placeholder="Paste Instagram Reel link here"
+      aria-label="Instagram Reel URL"
+    >
+
+    <button onclick="checkLink()">Continue</button>
+
+    <div id="message" role="status"></div>
+  </div>
+
+  <div class="ad">
+    Advertisement
+  </div>
+
+  <div class="info">
+    <h3>How to use</h3>
+    <p>1. Open Instagram and copy a public Reel link.</p>
+    <p>2. Paste the link in the box above.</p>
+    <p>3. Tap Continue to check the link.</p>
+    <p><strong>Note:</strong> This website currently checks links only. Video downloading is not connected yet.</p>
+  </div>
+</div>
+
+<footer>
+  © 2026 Insta Reel Saver
+  <p>Respect creators' rights and Instagram's terms.</p>
+</footer>
+
 <script>
-document.getElementById("reelForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  const link = document.getElementById("reelLink").value.trim();
+function checkLink(){
+  const input = document.getElementById("reelUrl");
+  const message = document.getElementById("message");
+  const value = input.value.trim();
+
   try {
-    const url = new URL(link);
-    if (url.hostname === "instagram.com" ||
-        url.hostname.endsWith(".instagram.com")) {
-      document.getElementById("message").textContent =
-        "Link entered successfully. Actual video downloading is not connected yet.";
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+
+    if (
+      (host === "instagram.com" || host.endsWith(".instagram.com")) &&
+      url.protocol === "https:"
+    ) {
+      message.textContent =
+        "Link looks valid. Actual video downloading is not available yet.";
     } else {
-      document.getElementById("message").textContent =
-        "Please enter a valid Instagram link.";
+      message.textContent =
+        "Please enter a valid Instagram URL starting with https://";
     }
-  } catch {
-    document.getElementById("message").textContent =
-      "Please enter a valid URL.";
+  } catch (e) {
+    message.textContent = "Please paste a valid Instagram Reel link.";
   }
-});
+}
 </script>
+
 </body>
 </html>
