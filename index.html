@@ -3,190 +3,195 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Insta Reel Saver</title>
-<meta name="description" content="Insta Reel Saver - A simple and mobile-friendly Instagram Reel link tool.">
+
+<meta name="description" content="Check your public Instagram Reel link with Insta Reel Saver.">
+
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f3ff;
-  color:#222;
+* {
+  box-sizing: border-box;
 }
-header{
-  background:linear-gradient(120deg,#833ab4,#fd1d1d,#fcb045);
-  color:white;
-  text-align:center;
-  padding:28px 15px;
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f3ff;
+  color: #222;
 }
-header h1{margin:0;font-size:30px}
-header p{margin:10px 0 0;font-size:15px}
-.container{
-  max-width:520px;
-  margin:28px auto;
-  padding:20px;
+
+header {
+  background: linear-gradient(120deg, #833ab4, #fd1d1d, #fcb045);
+  color: white;
+  text-align: center;
+  padding: 30px 15px;
 }
-.card{
-  background:white;
-  padding:24px 18px;
-  border-radius:18px;
-  box-shadow:0 5px 20px #00000012;
-  text-align:center;
+
+header h1 {
+  margin: 0;
+  font-size: 30px;
 }
-h2{font-size:23px;margin-top:0}
-input{
-  width:100%;
-  padding:15px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  font-size:15px;
-  margin:12px 0;
+
+header p {
+  margin-bottom: 0;
 }
-button{
-  width:100%;
-  padding:15px;
-  border:0;
-  border-radius:10px;
-  background:#833ab4;
-  color:white;
-  font-size:17px;
-  font-weight:bold;
-  cursor:pointer;
+
+.container {
+  max-width: 550px;
+  margin: 30px auto;
+  padding: 15px;
 }
-button:hover{background:#692b91}
-#message{
-  margin-top:15px;
-  font-size:14px;
-  overflow-wrap:anywhere;
+
+.card {
+  background: white;
+  padding: 25px 20px;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px #00000012;
+  text-align: center;
 }
-.ad{
-  margin-top:22px;
-  min-height:90px;
-  background:#fff;
-  border:1px dashed #bbb;
-  border-radius:12px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#888;
-  font-size:14px;
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 9px;
+  font-size: 15px;
 }
-.info{
-  background:white;
-  margin-top:20px;
-  padding:20px;
-  border-radius:15px;
-  line-height:1.7;
+
+button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 9px;
+  background: #833ab4;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
 }
-footer{
-  text-align:center;
-  padding:22px 12px;
-  color:#666;
-  font-size:13px;
+
+button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+#message {
+  margin-top: 18px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.info {
+  background: white;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 14px;
+  line-height: 1.7;
+}
+
+footer {
+  text-align: center;
+  padding: 22px 12px;
+  font-size: 13px;
+  color: #666;
+}
+
+footer a {
+  color: #833ab4;
+  text-decoration: none;
+  margin: 0 4px;
 }
 </style>
 </head>
+
 <body>
 
 <header>
   <h1>📥 Insta Reel Saver</h1>
-  <p>A simple tool for Instagram Reel links</p>
+  <p>Instagram Reel Link Checker</p>
 </header>
 
-<div class="container">
-  <div class="card">
-    <h2>Get Your Reel Link Ready</h2>
-    <p>Paste a public Instagram Reel URL below.</p>
+<main class="container">
 
-    <input
-      type="url"
-      id="reelUrl"
-      placeholder="Paste Instagram Reel link here"
-      aria-label="Instagram Reel URL"
-    >
+  <section class="card">
+    <h2>Instagram Reels Saver</h2>
 
-    <button onclick="checkLink()">Continue</button>
+    <p>Paste your public Instagram Reel link below.</p>
 
-    <div id="message" role="status"></div>
-  </div>
+    <form id="reelForm">
+      <input
+        type="url"
+        id="reelUrl"
+        placeholder="https://www.instagram.com/reel/..."
+        aria-label="Instagram Reel URL"
+        required
+      >
 
-  <div class="ad">
-    Advertisement
-  </div>
+      <button type="submit" id="checkButton">
+        Check Reel Link
+      </button>
+    </form>
 
-  <div class="info">
+    <p id="message" role="status" aria-live="polite"></p>
+
+    <p>
+      <small>
+        Note: Video downloading is not available yet.
+      </small>
+    </p>
+  </section>
+
+  <section class="info">
     <h3>How to use</h3>
     <p>1. Open Instagram and copy a public Reel link.</p>
-    <p>2. Paste the link in the box above.</p>
-    <p>3. Tap Continue to check the link.</p>
-    <p><strong>Note:</strong> This website currently checks links only. Video downloading is not connected yet.</p>
-  </div>
-</div>
+    <p>2. Paste the link into the box above.</p>
+    <p>3. Tap Check Reel Link.</p>
+    <p>Only save content you own or have permission to use.</p>
+  </section>
+
+</main>
 
 <footer>
-  © 2026 Insta Reel Saver
-  <p>Respect creators' rights and Instagram's terms.</p>
+  <a href="about.html">About Us</a> |
+  <a href="privacy.html">Privacy Policy</a> |
+  <a href="contact.html">Contact Us</a>
+
+  <p>© 2026 Insta Reel Saver</p>
 </footer>
 
 <script>
-function checkLink(){
-  const input = document.getElementById("reelUrl");
-  const message = document.getElementById("message");
-  const value = input.value.trim();
+const form = document.getElementById("reelForm");
+const input = document.getElementById("reelUrl");
+const message = document.getElementById("message");
+const button = document.getElementById("checkButton");
+
+form.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const link = input.value.trim();
+
+  let url;
 
   try {
-    const url = new URL(value);
-    const host = url.hostname.toLowerCase();
-
-    if (
-      (host === "instagram.com" || host.endsWith(".instagram.com")) &&
-      url.protocol === "https:"
-    ) {
-      message.textContent =
-        "Link looks valid. Actual video downloading is not available yet.";
-    } else {
-      message.textContent =
-        "Please enter a valid Instagram URL starting with https://";
-    }
-  } catch (e) {
-    message.textContent = "Please paste a valid Instagram Reel link.";
-  }
-}
-</script>
-  <section style="max-width:600px;margin:25px auto;padding:25px;text-align:center;background:#f5f3ff;border-radius:15px;font-family:Arial,sans-serif;">
-
-  <h2>Instagram Reels Saver</h2>
-
-  <p>Paste Your Instagram Reel Link Below</p>
-
-  <input
-    type="url"
-    id="reelLink"
-    placeholder="Paste Instagram Reel URL Here"
-    style="width:90%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:10px 0;"
-  >
-
-  <button
-    onclick="checkReel()"
-    style="padding:12px 25px;background:#833ab4;color:white;border:none;border-radius:8px;font-size:16px;">
-    Download Reel
-  </button>
-
-  <p id="result" style="margin-top:15px;"></p>
-
-</section>
-
-<script>
-async function checkReel() {
-  const link = document.getElementById("reelLink").value.trim();
-  const result = document.getElementById("result");
-
-  if (!link) {
-    result.textContent = "Please paste an Instagram Reel link.";
+    url = new URL(link);
+  } catch (error) {
+    message.textContent = "Please enter a valid Instagram Reel link.";
     return;
   }
 
-  result.textContent = "Checking your link...";
+  if (
+    url.protocol !== "https:" ||
+    !/^www\.instagram\.com$/i.test(url.hostname) ||
+    !/^\/reel\/[A-Za-z0-9_-]+\/?$/i.test(url.pathname)
+  ) {
+    message.textContent =
+      "Please enter a valid public Instagram Reel URL.";
+    return;
+  }
+
+  button.disabled = true;
+  message.textContent = "Checking your link. Please wait...";
 
   try {
     const response = await fetch(
@@ -201,19 +206,23 @@ async function checkReel() {
     );
 
     const data = await response.json();
-    result.textContent = data.message || "Check complete.";
-  } catch (error) {
-    result.textContent = "Server is waking up. Please try again shortly.";
-  
 
-  
+    if (!response.ok) {
+      message.textContent =
+        data.message || "Unable to check this link.";
+    } else {
+      message.textContent =
+        data.message || "Link checked successfully.";
+    }
+
+  } catch (error) {
+    message.textContent =
+      "Could not connect to the server. Please try again in a moment.";
+  } finally {
+    button.disabled = false;
+  }
+});
 </script>
-<footer style="text-align:center;padding:20px;background:#f5f3ff;margin-top:20px;">
-  <a href="about.html">About Us</a> |
-  <a href="privacy.html">Privacy Policy</a> |
-  <a href="contact.html">Contact Us</a>
-  <p>© 2026 Insta Reel Saver</p>
-</footer>
-  
-</body> 
+
+</body>
 </html>
