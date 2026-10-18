@@ -9,10 +9,7 @@ import yt_dlp
 
 app = Flask(name)
 
-CORS(
-app,
-resources={r"/api/*": {"origins": "https://mush7860.github.io"}}
-)
+CORS(app, resources={r"/api/*": {"origins": "https://mush7860.github.io"}})
 
 REEL_PATTERN = re.compile(
 r"^https?://(www.)?instagram.com/reel/[A-Za-z0-9_-]+/?(?.*)?$"
@@ -42,7 +39,7 @@ if not REEL_PATTERN.match(url):
 
 return jsonify({
     "success": True,
-    "message": "Reel link is valid. You can try downloading it if you have permission."
+    "message": "Reel link is valid. Downloading may not be available for every Reel."
 })
 
 @app.route("/api/download", methods=["POST"])
@@ -85,11 +82,8 @@ try:
     response = send_file(
         video_path,
         as_attachment=True,
-        download_name=os.path.basename(video_path),
-        mimetype="video/mp4" if video_path.lower().endswith(".mp4")
-        else "application/octet-stream"
+        download_name=os.path.basename(video_path)
     )
-
     response.call_on_close(
         lambda: shutil.rmtree(temp_dir, ignore_errors=True)
     )
