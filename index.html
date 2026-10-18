@@ -177,13 +177,35 @@ function checkLink(){
 </section>
 
 <script>
-function checkReel() {
+async function checkReel() {
   const link = document.getElementById("reelLink").value.trim();
   const result = document.getElementById("result");
 
-  if (!/^https?:\/\/(www\.)?instagram\.com\/reel\/[A-Za-z0-9_-]+\/?(\?.*)?$/.test(link)) {
-    result.textContent = "Please enter a valid Instagram Reel link.";
+  if (!link) {
+    result.textContent = "Please paste an Instagram Reel link.";
     return;
+  }
+
+  result.textContent = "Checking your link...";
+
+  try {
+    const response = await fetch(
+      "https://insta-reel-saver.onrender.com/api/check",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url: link })
+      }
+    );
+
+    const data = await response.json();
+    result.textContent = data.message || "Check complete.";
+  } catch (error) {
+    result.textContent = "Server is waking up. Please try again shortly.";
+  }
+}
   }
 
   result.textContent =
