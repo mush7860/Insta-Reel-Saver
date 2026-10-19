@@ -1,100 +1,116 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+import yt_dlp
 import re
 import os
 import glob
 import shutil
 import tempfile
-import yt_dlp
 
-app = Flask(name)
+app = Flask(__name__)
 
-CORS(app, resources={r"/api/*": {"origins": "https://mush7860.github.io"}})
-
-REEL_PATTERN = re.compile(
-r"^https?://(www.)?instagram.com/reel/[A-Za-z0-9_-]+/?(?.*)?$"
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": "https://mush7860.github.io"
+        }
+    }
 )
+
+
+def valid_url(url):
+    pattern = (
+        r"^https?://(www\.)?instagram\.com/"
+        r"(reel|reels|p)/[A-Za-z0-9_-]+/?(\?.*)?$"
+    )
+    return bool(re.match(pattern, url))
+
 
 @app.route("/")
 def home():
-return jsonify({
-"status": "online",
-"message": "Insta Reel Saver server is running!"
-})
+    return jsonify({
+        "status": "online",
+        "message": "Insta Reel Saver server is running!"
+    })
+
 
 @app.route("/health")
 def health():
-return jsonify({"status": "ok"})
+    return jsonify({"status": "ok"})
+
 
 @app.route("/api/check", methods=["POST"])
 def check_reel():
-data = request.get_json(silent=True) or {}
-url = data.get("url", "").strip()
+    data = request.get_json(silent=True) or {}
+    url = data.get("url", "").strip()
 
-if not REEL_PATTERN.match(url):
+    if not valid_url(url):
+        return jsonify({
+            "success": False,
+            "message": "Please enter a valid Instagram Reel URL."
+        }), 400
+
     return jsonify({
-        "success": False,
-        "message": "Please enter a valid Instagram Reel URL."
-    }), 400
+        "success": True,
+        "message": "Reel link is valid."
+    })
 
-return jsonify({
-    "success": True,
-    "message": "Reel link is valid. Downloading may not be available for every Reel."
-})
 
 @app.route("/api/download", methods=["POST"])
 def download_reel():
-data = request.get_json(silent=True) or {}
-url = data.get("url", "").strip()
+    data = request.get_json(silent=True) or {}
+    url = data.get("url", "").strip()
 
-if not REEL_PATTERN.match(url):
-    return jsonify({
-        "success": False,
-        "message": "Please enter a valid Instagram Reel URL."
-    }), 400
+    if not valid_url(url):
+        return jsonify({
+            "success": False,
+            "message": "Please enter a valid Instagram Reel URL."
+        }), 400
 
-temp_dir = tempfile.mkdtemp(prefix="reel_")
+    folder = tempfile.mkdtemp()
 
-try:
-    options = {
-        "outtmpl": os.path.join(temp_dir, "%(id)s.%(ext)s"),
-        "format": "best[ext=mp4]/best",
-        "noplaylist": True,
-        "quiet": True,
-        "no_warnings": True,
-        "socket_timeout": 20,
-        "max_filesize": 100 * 1024 * 1024
-    }
+    try:
+        options = {
+            "outtmpl": os.path.join(folder, "%(id)s.%(ext)s"),
+            "format": "best[ext=mp4]/best",
+            "noplaylist": True,
+            "quiet": True,
+            "no_warnings": True,
+            "socket_timeout": 25,
+        }
 
-    with yt_dlp.YoutubeDL(options) as downloader:
-        downloader.download([url])
+        with yt_dlp.YoutubeDL(options) as ydl:
+            ydl.download([url])
 
-    files = [
-        path for path in glob.glob(os.path.join(temp_dir, "*"))
-        if os.path.isfile(path) and not path.endswith((".part", ".ytdl"))
-    ]
+        files = glob.glob(os.path.join(folder, "*"))
 
-    if not files:
-        raise RuntimeError("No downloadable video file was produced.")
+        if not files:
+            raise Exception("No video file was created.")
 
-    video_path = max(files, key=os.path.getsize)
+        response = send_file(
+            files[0],
+            as_attachment=True,
+            download_name="instagram_reel.mp4"
+        )
 
-    response = send_file(
-        video_path,
-        as_attachment=True,
-        download_name=os.path.basename(video_path)
-    )
-    response.call_on_close(
-        lambda: shutil.rmtree(temp_dir, ignore_errors=True)
-    )
-    return response
+        response.call_on_close(
+            lambda: shutil.rmtree(folder, ignore_errors=True)
+        )
 
-except Exception:
-    shutil.rmtree(temp_dir, ignore_errors=True)
-    return jsonify({
-        "success": False,
-        "message": "Download failed. This Reel may not be available through supported public access."
-    }), 400
+        return response
 
-if name == "main":
-app.run(host="0.0.0.0", port=10000)
+    except Exception:
+        shutil.rmtree(folder, ignore_errors=True)
+
+        return jsonify({
+            "success": False,
+            "message": (
+                "Download failed. Instagram may require "
+                "authentication or may block this request."
+            )
+        }), 502
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
